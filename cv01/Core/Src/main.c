@@ -66,6 +66,20 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+uint8_t morse[32] = {
+		1,0,1,0,1,
+		0,0,
+		1,1,1,0,1,1,1,0,1,1,1,
+		0,0,
+		1,0,1,0,1,0,
+		0,0,0,0,0
+};
+
+uint32_t morse_binary =
+  0b10101001110111011100101010000000
+;
+
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,6 +110,34 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  /*LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+	  LL_mDelay(200);
+	  LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+	  LL_mDelay(200);
+//	  	   */
+	  /* for (uint8_t i = 0; i<= 31; i++)
+	  {
+		  uint8_t value = morse[i];
+		  if (value == 1){
+			  LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+		  LL_mDelay(200);}
+		  else{
+			  LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+		  LL_mDelay(200);}
+	  }
+//
+
+ */
+	  for (uint8_t i = 0; i <= 31; i++) {
+	      uint32_t bit = (morse_binary >> (31 - i)) & 0b1;
+	      if (bit == 1) {
+	          LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+	      } else {
+	          LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+	      }
+          LL_mDelay(200);
+	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

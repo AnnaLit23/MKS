@@ -63,13 +63,55 @@ volatile uint32_t Tick;
 
 void blikac(void)
  {
- static uint32_t delay;
+	static uint32_t delay;
 
- if (Tick > delay + LED_TIME_BLINK) {
- LL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
- delay = Tick;
- }
- }
+	if (Tick > delay + LED_TIME_BLINK) {
+		LL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+		delay = Tick;
+	}
+}
+
+
+void tlacitka(void) {
+	static uint32_t delay;
+	static uint16_t debounce1 = 0xFFFF;
+	static uint16_t debounce2 = 0xFFFF;
+
+	if (Tick > delay + 5) {
+
+		delay = Tick;
+
+		static uint32_t off_time;
+		if (Tick > off_time) {
+			LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin);
+		}
+
+		debounce1 <<= 1;
+		uint32_t bit = LL_GPIO_IsInputPinSet(S1_GPIO_Port, S1_Pin);
+		if (bit) {
+			debounce1 |= 0x0001;
+		}
+
+		if (debounce1 == 0x7FFF) {
+			LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin);
+			off_time = Tick + LED_TIME_LONG;
+		}
+
+		debounce2 <<= 1;
+		uint32_t bit2 = LL_GPIO_IsInputPinSet(S2_GPIO_Port, S2_Pin);
+		if (bit2) {
+			debounce2 |= 0x0001;
+		}
+
+		if (debounce2 == 0x7FFF) {
+			LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin);
+			off_time = Tick + LED_TIME_SHORT;
+		}
+
+	}
+}
+
+/*
 
 void tlacitka(void) {
 	static uint32_t delay;
@@ -101,7 +143,7 @@ void tlacitka(void) {
 
 	}
 }
-
+*/
 /* USER CODE END 0 */
 
 /**
